@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Calculation:scenario xmlns:Calculation="http://www.sap.com/ndb/BiModelCalculation.ecore" id="globalBasketAnalysisEndUser" applyPrivilegeType="NONE" dataCategory="CUBE" schemaVersion="3.0" outputViewType="Aggregation" cacheInvalidationPeriod="NONE" enforceSqlExecution="false">
+<descriptions defaultDescription="globalBasketAnalysisEndUser"/>
+<localVariables/>
+<variableMappings/>
+<dataSources>
+  <DataSource id="globalBasketAnalysis">
+    <resourceUri>globalBasketAnalysis</resourceUri>
+  </DataSource>
+</dataSources>
+<calculationViews/>
+<logicalModel id="globalBasketAnalysis">
+  <attributes>
+    <attribute id="ProductNameOfInterest" order="1" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="ProductName"/>
+      <keyMapping columnObjectName="globalBasketAnalysis" columnName="ProductNameOfInterest"/>
+    </attribute>
+    <attribute id="ProductName" order="2" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="ProductName"/>
+      <keyMapping columnObjectName="globalBasketAnalysis" columnName="ProductName"/>
+    </attribute>
+  </attributes>
+  <calculatedAttributes>
+    <calculatedAttribute id="associationStrength" order="4" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
+      <keyCalculation datatype="DECIMAL" expressionLanguage="SQL" length="13" scale="2">
+        <formula>round(&quot;countFrequency&quot;/1000,2)</formula>
+      </keyCalculation>
+    </calculatedAttribute>
+  </calculatedAttributes>
+  <baseMeasures>
+    <measure id="countFrequency" order="3" aggregationType="sum" measureType="simple">
+      <descriptions defaultDescription="countFrequency"/>
+      <measureMapping columnObjectName="globalBasketAnalysis" columnName="countFrequency"/>
+    </measure>
+  </baseMeasures>
+  <calculatedMeasures/>
+  <restrictedMeasures/>
+  <localDimensions/>
+</logicalModel>
+<layout>
+  <shapes>
+    <shape expanded="true" modelObjectName="Output" modelObjectNameSpace="MeasureGroup">
+      <upperLeftCorner x="40" y="85"/>
+    </shape>
+  </shapes>
+</layout>
+</Calculation:scenario>

@@ -1,0 +1,33 @@
+{
+  "TLOGF": {
+    "target": {
+      "object": "TLOGF",
+      "logical_schema": "sourceBasket"
+    }
+  },
+    "PRODUCTBUNDLING": {
+    "target": {
+      "object": "TLOGF_B",
+      "logical_schema": "sourceBasket"
+    }
+  }
+  ,
+    "SalesDataCurrent": {
+    "target": {
+      "object": "TLOGF_C",
+      "logical_schema": "sourceBasket"
+    }
+  }, 
+    "SalesDataHistory": {
+    "target": {
+      "object": "TLOGF_H",
+      "logical_schema": "sourceBasket"
+    }
+  }, 
+    "SalesDataOnline": {
+    "target": {
+      "object": "TLOGF_O",
+      "logical_schema": "sourceBasket"
+    }
+  }
+}

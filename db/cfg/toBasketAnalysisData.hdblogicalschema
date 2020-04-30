@@ -1,0 +1,8 @@
+
+{
+ "sourceBasket" : {
+   "target": { 
+     "schema" : "BASKETANALYSISDATA"   
+   } 
+ }
+}

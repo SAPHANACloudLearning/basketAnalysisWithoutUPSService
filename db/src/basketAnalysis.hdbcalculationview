@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Calculation:scenario xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:Calculation="http://www.sap.com/ndb/BiModelCalculation.ecore" id="basketAnalysis" enforceSqlExecution="false" cacheInvalidationPeriod="NONE" outputViewType="Aggregation" schemaVersion="3.0" dataCategory="CUBE" applyPrivilegeType="NONE">
+<descriptions defaultDescription="basketAnalysis"/>
+<localVariables>
+  <variable id="selectedProduct" parameter="true">
+    <descriptions defaultDescription=""/>
+    <variableProperties mandatory="false" length="13" datatype="VARCHAR">
+      <valueDomain type="empty"/>
+      <selection multiLine="false" type="Single"/>
+    </variableProperties>
+  </variable>
+</localVariables>
+<variableMappings/>
+<dataSources>
+  <DataSource id="SalesDataCurrent">
+    <resourceUri>SalesDataCurrent</resourceUri>
+  </DataSource>
+  <DataSource id="SalesDataHistory">
+    <resourceUri>SalesDataHistory</resourceUri>
+  </DataSource>
+  <DataSource id="SalesDataOnline">
+    <resourceUri>SalesDataOnline</resourceUri>
+  </DataSource>
+</dataSources>
+<calculationViews>
+  <calculationView xsi:type="Calculation:ProjectionView" id="extractRelevantReceipts" filterExpressionLanguage="SQL">
+    <viewAttributes>
+      <viewAttribute id="ProductName"/>
+      <viewAttribute id="OrderID"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <restrictedViewAttributes/>
+    <input node="cleanse"/>
+    <filter>&quot;ProductName&quot;='$$selectedProduct$$'</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:AggregationView" id="cleanse">
+    <viewAttributes>
+      <viewAttribute id="ProductName"/>
+      <viewAttribute id="OrderID"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <restrictedViewAttributes/>
+    <input node="combineSources"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:UnionView" id="combineSources">
+    <viewAttributes>
+      <viewAttribute id="ProductName"/>
+      <viewAttribute id="OrderID"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <restrictedViewAttributes/>
+    <input node="SalesDataCurrent" emptyUnionBehavior="NO_ROW">
+      <mapping xsi:type="Calculation:AttributeMapping" target="ProductName" source="ProductName"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="OrderID" source="OrderID"/>
+    </input>
+    <input node="SalesDataHistory" emptyUnionBehavior="NO_ROW">
+      <mapping xsi:type="Calculation:AttributeMapping" target="ProductName" source="ProductName"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="OrderID" source="OrderID"/>
+    </input>
+    <input node="SalesDataOnline">
+      <mapping xsi:type="Calculation:AttributeMapping" target="ProductName" source="ProductName"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="OrderID" source="OrderID"/>
+    </input>
+  </calculationView>
+  <calculationView xsi:type="Calculation:AggregationView" id="getDistinctRelevantOrderIDs">
+    <viewAttributes>
+      <viewAttribute id="OrderID"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <restrictedViewAttributes/>
+    <input node="extractRelevantReceipts"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="selectProductsOnSameReceipt" cardinality="CN_N" joinType="inner">
+    <viewAttributes>
+      <viewAttribute id="OrderID"/>
+      <viewAttribute id="ProductName"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <restrictedViewAttributes/>
+    <input node="getDistinctRelevantOrderIDs">
+      <mapping xsi:type="Calculation:AttributeMapping" target="OrderID" source="OrderID"/>
+    </input>
+    <input node="productsOnReceipt">
+      <mapping xsi:type="Calculation:AttributeMapping" target="OrderID" source="OrderID"/>
+    </input>
+    <joinAttribute name="OrderID"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="productsOnReceipt" filterExpressionLanguage="SQL">
+    <viewAttributes>
+      <viewAttribute id="OrderID"/>
+    
+      <viewAttribute id="ProductName"/></viewAttributes>
+    <calculatedViewAttributes/>
+    <restrictedViewAttributes/>
+    <input node="cleanse"/>
+    <filter>&quot;ProductName&quot;!='$$selectedProduct$$'</filter>
+  </calculationView>
+</calculationViews>
+<logicalModel id="selectProductsOnSameReceipt">
+  <attributes>
+    <attribute id="OrderID" order="2" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="OrderID"/>
+      <keyMapping columnObjectName="selectProductsOnSameReceipt" columnName="OrderID"/>
+    </attribute>
+    <attribute id="ProductName" order="3" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="ProductName"/>
+      <keyMapping columnObjectName="selectProductsOnSameReceipt" columnName="ProductName"/>
+    </attribute>
+  </attributes>
+  <calculatedAttributes/>
+  <baseMeasures/>
+  <calculatedMeasures>
+    <measure id="countFrequency" length="" datatype="INTEGER" aggregationType="sum" order="1" measureType="simple" aggregatable="true" calculatedMeasureType="counter">
+      <descriptions defaultDescription="countFrequency"/>
+      <exceptionAggregation>
+        <attribute attributeName="OrderID"/>
+      </exceptionAggregation>
+      <formula>1</formula>
+      
+      </measure>
+  </calculatedMeasures>
+  <restrictedMeasures/>
+  <localDimensions/>
+</logicalModel>
+<layout>
+  <shapes>
+    <shape modelObjectNameSpace="MeasureGroup" modelObjectName="Output" expanded="true">
+      <upperLeftCorner y="112" x="213"/>
+    
+      <rectangleSize width="160"/>
+    </shape>
+  
+    <shape modelObjectNameSpace="CalculationView" modelObjectName="extractRelevantReceipts" expanded="true">
+      <upperLeftCorner y="481" x="91"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="cleanse" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="223" y="588"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+  
+    <shape expanded="true" modelObjectName="combineSources" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="223" y="659"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+  
+    <shape modelObjectNameSpace="CalculationView" modelObjectName="getDistinctRelevantOrderIDs" expanded="true">
+      <upperLeftCorner y="376" x="91"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape modelObjectNameSpace="CalculationView" modelObjectName="selectProductsOnSameReceipt" expanded="true">
+      <upperLeftCorner y="217" x="213"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape modelObjectName="getDistinctRelevantOrderIDs" modelObjectNameSpace="selectProductsOnSameReceipt" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="51" y="39"/>
+      <rectangleSize width="227"/>
+    </shape>
+    <shape modelObjectName="productsOnReceipt" modelObjectNameSpace="selectProductsOnSameReceipt" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="320" y="30"/>
+      <rectangleSize width="153"/>
+    </shape>
+    <shape modelObjectNameSpace="CalculationView" modelObjectName="productsOnReceipt" expanded="true">
+      <upperLeftCorner y="376" x="301"/>
+      <rectangleSize height="30" width="160"/>
+    </shape></shapes>
+</layout>
+</Calculation:scenario>
